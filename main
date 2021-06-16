@@ -1,0 +1,57 @@
+from random import random
+
+credentials = {}
+
+
+def check_User(temp_User, temp_Pass, credentials):
+    log_Yes = bool(0)
+    for keys, values in credentials:
+        if credentials.keys() == temp_User:
+            if credentials.values() == temp_Pass:
+                log_Yes = bool(1)
+    if log_Yes:
+        return True
+    else:
+        return False
+
+
+def log_In(credentials):
+    if len(credentials) < 1:
+        print("There are no accounts added")
+    else:
+        counter = 0
+        for x in range(0, 2):
+            temp_User = input("Enter your username: ")
+            temp_Pass = input("Enter your password: ")
+            log_Successful = check_User(temp_User, temp_Pass, credentials)
+            if log_Successful:
+                print("Welcome %s!" % temp_User)
+                break
+            else:
+                print("The username/ password is wrong!\nTry again")
+                counter += 1
+            if counter == 2:
+                print("You're now blocked from this website!\n\
+                To get unblocked you need a code that we'll send ya via e-mail or phone number!")
+                input("Enter your email or phone number: ")
+                code = random.__str__()
+                print("Your code is: %s" % code)
+                temp_Code = input("Enter the code: ")
+                if temp_Code is not code:
+                    while temp_Code is not code:
+                        code = random.__str__()
+                        print("Your code is: %s" % code)
+                        temp_Code = input("Enter the code: ")
+                else:
+                    print("You're now unblocked!")
+
+
+print("Welcome to Armbook!")
+print("Choose your option:\n"
+      "1:Log in\n"
+      "2:Create an account\n"
+      "3:Search for a user\n")
+option = input()
+
+if option == "1":
+    log_In(credentials)
