@@ -1,57 +1,134 @@
-from random import random
+from random import randint
 
 credentials = {}
+friends_list = {}
+log = 0
 
 
-def check_User(temp_User, temp_Pass, credentials):
-    log_Yes = bool(0)
-    for keys, values in credentials:
-        if credentials.keys() == temp_User:
-            if credentials.values() == temp_Pass:
-                log_Yes = bool(1)
-    if log_Yes:
+def check_user(temp_user, temp_pass, credential):
+    log_yes = bool(0)
+    for key, value in credential.items():
+        if key == temp_user:
+            if value[0] == temp_pass:
+                log_yes = bool(1)
+    if log_yes:
         return True
     else:
         return False
 
 
-def log_In(credentials):
-    if len(credentials) < 1:
-        print("There are no accounts added")
+def log_in(credential, temp_user, temp_pass):
+    if len(credential) < 1:
+        return False
     else:
         counter = 0
-        for x in range(0, 2):
-            temp_User = input("Enter your username: ")
-            temp_Pass = input("Enter your password: ")
-            log_Successful = check_User(temp_User, temp_Pass, credentials)
-            if log_Successful:
-                print("Welcome %s!" % temp_User)
+        for x in range(0, 3):
+            log_successful = check_user(temp_user, temp_pass, credential)
+            if log_successful:
+                print("Welcome %s!\n" % temp_user)
                 break
             else:
                 print("The username/ password is wrong!\nTry again")
                 counter += 1
-            if counter == 2:
-                print("You're now blocked from this website!\n\
-                To get unblocked you need a code that we'll send ya via e-mail or phone number!")
+            if counter == 3:
+                print("You're now blocked from this website!\n"
+                      "To get unblocked you need a code that we'll send ya via e-mail or phone number!")
                 input("Enter your email or phone number: ")
-                code = random.__str__()
+                code = str(randint(0, 10000))
                 print("Your code is: %s" % code)
                 temp_Code = input("Enter the code: ")
-                if temp_Code is not code:
-                    while temp_Code is not code:
-                        code = random.__str__()
+                if temp_Code != code:
+                    print("The code is incorrect!\nTry again!")
+                    while temp_Code != code:
+                        code = str(randint(0, 10000))
                         print("Your code is: %s" % code)
                         temp_Code = input("Enter the code: ")
+                        if temp_Code != code:
+                            print("The code is incorrect!\nTry again!")
                 else:
                     print("You're now unblocked!")
+    return True
 
 
+# Да има начин да излизаш от менютата
+
+def account_creation(credential):
+    valid_credentials = bool(0)
+    valid_Pass = bool(0)
+    valid = bool(0)
+    temp_List = []
+    username = ""
+    while valid != 1:
+        username = input("Enter you username: ")
+        temp_Password = input("Enter your password: ")
+        password = input("Enter your password again: ")
+        email = input("Enter your email address: ")
+        birth_Date = input("Enter your day of birth: ").split(".")
+        gender = input("Enter your gender: ")
+        if len(credential) >= 1:
+            for key, value in credential.items():
+                if key == username:
+                    print("This username already exists!")
+                    break
+                if email == value[1]:
+                    print("This email already exists!")
+                    break
+                else:
+                    valid_credentials = bool(1)
+        else:
+            valid_credentials = bool(1)
+        if temp_Password == password:
+            valid_Pass = bool(1)
+        else:
+            print("The password you've entered doesn't match!")
+        if valid_Pass and valid_credentials:
+            temp_List = [password, email, birth_Date, gender]
+            valid = bool(1)
+
+    credential[username] = temp_List
+    print("The account has been added!")
+    return True
+
+
+def change_credentials(credential, temp_user, temp_pass):
+    temp_option = input("What do you want to change:\n"
+                        "1.Username\n "
+                        "2.Password\n")
+    if temp_option == 1:
+        true = bool(0)
+        while true != 1:
+            username = input("Your new username: ")
+            if credential.keys().__contains__(username):
+                print("This username already exists! Choose another one!")
+
+
+option = ""
 print("Welcome to Armbook!")
-print("Choose your option:\n"
-      "1:Log in\n"
-      "2:Create an account\n"
-      "3:Search for a user\n")
-option = input()
+while option != "Close":
+    option = input("Choose your option:\n"
+                   "1:Log in\n"
+                   "2:Create an account\n"
+                   "3:Close\n")
+    if option == "1":
+        user = input("Enter your username: ")
+        password = input("Enter your password: ")
+        if log >= 1:
+            log_in(credentials, user, password)
+            second_Option = input("Choose your option:\n"
+                                  "1:Change your username/password\n"
+                                  "2:Change your info\n"
+                                  "3:Search for another user\n"
+                                  "4:Delete your account\n"
+                                  "5:Add a user as a friend\n"
+                                  "6:Remove a user from your friends list\n")
+            if second_Option == "1":
+                change_credentials(credentials, user, password)
 
-if option == "1":
-    log_In(credentials)
+        else:
+            print("There are no accounts added")
+    elif option == "2":
+        if account_creation(credentials):
+            log += 1
+    elif option == "3":
+        option = "Close"
+        print("See you next time!")
